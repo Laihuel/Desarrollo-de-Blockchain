@@ -1,0 +1,8 @@
+mi frase semilla: spoil danger stomach boring champion arch cherry father kit shiver wife dragon
+path de derivación: m/44'/1'/0'
+privada maestra: tprv8gF7JX4ArZV176hsqP7Ltsar1cieWoHM5kGiiP4qEQDWPetjx4DsSu5gKRERPzAeK6BRFv46Qc5W8f75ZAmpEwTLM1zYVrVLWJ4LDdw4nAo
+pública maestra: tpubDCw9Sw6QzwAfzZjfj2mwJHExaeEag8UFf3sVzu78eg1uE99WaT3TdPhYVZH7Ei9jbh2XaXUW2EhSG8yznvN1zSEigYdqCGMZoCmkhwyqwQb
+addr1: mjZVVfXRcJ83LpcoL16uHr9ciQ6zV9PVzi
+privada de addr1: cVDvdiWEM7WcTTLcwTTq8ox9M8LapgG73Jzw8BdPYEc92DF3Hzbs
+addr2: mz2R4owRMucX3euEUgV8FoGvEuw8fp8kni
+privada addr2: cVhrrQWDC7JC364Hij872hvQuH2DawcbAURNWMgQVXnY1Kc3c2P8
