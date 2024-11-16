@@ -1,0 +1,17 @@
+[block:7084058 txIndex:9]from: 0xfd3...d0ef1to: MessageWall.(constructor)value: 0 weidata: 0x608...82255logs: 0hash: 0x6b6...c4db7
+status	0x1 Transaction mined and execution succeed
+transaction hash	0x6196f1bcae1e9053b9845065fe81a22890ef624cdce7a055f3d02be989e5c469
+block hash	0x6b63c97e0b68c0a195e7a166fb905e7d3821379415249e31dcc2c856867c4db7
+block number	7084058
+contract address	0x553d556b3d0378b1d093d51b00e7b91228df84a3
+from	0xfd31d16f7b3e5a1a94d0167f1014bc5c757d0ef1
+to	MessageWall.(constructor)
+gas	904056 gas
+transaction cost	895779 gas 
+input	0x608...82255
+decoded input	{
+	"address userRegistrationAddress": "0x45A310d63CEfb97BFaAF02F72466B51AbE582255"
+}
+decoded output	 - 
+logs	[]
+raw logs	[]

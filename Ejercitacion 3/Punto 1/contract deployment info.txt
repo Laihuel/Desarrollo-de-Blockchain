@@ -1,0 +1,14 @@
+status	0x1 Transaction mined and execution succeed
+transaction hash	0x226aa44a0066609052a60eba9f4ebb5be70b4d529a9c2d319ab131b0e98adaa5
+block hash	0x7c20ebbe597295be184636db655c12f23f45ccb3e0807b24cce56632ffa4b451
+block number	7082657
+contract address	0x1f3569c66b9a8ab114a49d85229970e57e676211
+from	0xfd31d16f7b3e5a1a94d0167f1014bc5c757d0ef1
+to	SimpleCounter.(constructor)
+gas	553705 gas
+transaction cost	548187 gas 
+input	0x608...a0033
+decoded input	{}
+decoded output	 - 
+logs	[]
+raw logs	[]

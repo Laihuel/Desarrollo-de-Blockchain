@@ -1,0 +1,274 @@
+from web3 import Web3
+import os
+import getpass  # Para pedir la clave privada de forma segura
+
+# Dirección del contrato y ABI
+REGISTRATION_CONTRACT_ADDRESS = "0x45a310d63cefb97bfaaf02f72466b51abe582255"
+# Convertir a formato checksum
+REGISTRATION_CHECKSUM_ADDRESS = Web3.to_checksum_address(REGISTRATION_CONTRACT_ADDRESS)
+
+# Dirección del contrato y ABI
+MESSAGE_WALL_CONTRACT_ADDRESS = "0x553d556b3d0378b1d093d51b00e7b91228df84a3"
+MESSAGE_WALL_CHECKSUM_ADDRESS = Web3.to_checksum_address(MESSAGE_WALL_CONTRACT_ADDRESS)
+
+REGISTRATION_ABI = [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "userAddress",
+					"type": "address"
+				}
+			],
+			"name": "getUserName",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "userName",
+					"type": "string"
+				}
+			],
+			"name": "registerUser",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		}
+	]
+
+MESSAGE_WALL_ABI = [
+		{
+			"inputs": [
+				{
+					"internalType": "address",
+					"name": "userRegistrationAddress",
+					"type": "address"
+				}
+			],
+			"stateMutability": "nonpayable",
+			"type": "constructor"
+		},
+		{
+			"inputs": [],
+			"name": "getAllMessages",
+			"outputs": [
+				{
+					"components": [
+						{
+							"internalType": "string",
+							"name": "user",
+							"type": "string"
+						},
+						{
+							"internalType": "string",
+							"name": "content",
+							"type": "string"
+						}
+					],
+					"internalType": "struct MessageWall.Message[]",
+					"name": "",
+					"type": "tuple[]"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "string",
+					"name": "content",
+					"type": "string"
+				}
+			],
+			"name": "postMessage",
+			"outputs": [],
+			"stateMutability": "nonpayable",
+			"type": "function"
+		},
+		{
+			"inputs": [
+				{
+					"internalType": "uint256",
+					"name": "",
+					"type": "uint256"
+				}
+			],
+			"name": "wall",
+			"outputs": [
+				{
+					"internalType": "string",
+					"name": "user",
+					"type": "string"
+				},
+				{
+					"internalType": "string",
+					"name": "content",
+					"type": "string"
+				}
+			],
+			"stateMutability": "view",
+			"type": "function"
+		}
+	]
+
+# Conecta al nodo
+#NODE = os.environ.get("NODE")
+NODE = "https://sepolia.infura.io/v3/de69aef06d794ec7bba8ef870e13acfa"
+if not NODE:
+    print("La variable de entorno NODE no está configurada")
+    exit()
+w3 = Web3(Web3.HTTPProvider(NODE))
+w3.is_connected()
+
+# Configuración de los contratos
+registration_contract = w3.eth.contract(address=REGISTRATION_CHECKSUM_ADDRESS, abi=REGISTRATION_ABI)
+message_wall_contract = w3.eth.contract(address=MESSAGE_WALL_CHECKSUM_ADDRESS, abi=MESSAGE_WALL_ABI)
+
+
+# Dirección de la cuenta desde la que interactuarás
+# Solicita la dirección desde la terminal
+MY_ADDRESS = input("Introduce tu clave pública (dirección de la cuenta): ").strip()
+# Validación básica de la dirección
+if not Web3.is_address(MY_ADDRESS):
+    print("La dirección ingresada no es válida.")
+    exit()
+
+print(f"Usando la dirección: {MY_ADDRESS}")
+
+def create_user_name():
+    userName = input("Ingresa el nombre de usuario que deseas: ")
+    try:
+        gas_limit = registration_contract.functions.registerUser(userName).estimate_gas({'from': MY_ADDRESS})
+        gas_estimate = int(gas_limit * 1.1)
+        
+        # Prepara la transacción
+        tx = registration_contract.functions.registerUser(userName).build_transaction({
+            'from': MY_ADDRESS,
+            'gas': gas_estimate,  # Ajusta el gas según sea necesario
+            'gasPrice': w3.to_wei('20', 'gwei'),  # Ajusta el precio del gas
+            'nonce': w3.eth.get_transaction_count(MY_ADDRESS),
+        })
+
+        # Firma la transacción con la clave privada
+        signed_tx = w3.eth.account.sign_transaction(tx, PRIVATE_KEY)
+
+        # Envía la transacción firmada
+        tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+        
+        # Espera a que la transacción se confirme
+        w3.eth.wait_for_transaction_receipt(tx_hash)
+
+        print(f"¡Usuario '{userName}' registrado exitosamente! Bienvenido!")
+        return userName
+    except Exception as e:
+        error_message = str(e)
+        
+        # Analiza el mensaje de error
+        if "User exists already" in error_message:
+            print("El nombre de usuario ya está tomado. Por favor, elige otro.")
+        elif "User already has a user name" in error_message:
+            print("Esta dirección ya tiene un nombre de usuario registrado.")
+        else:
+            print(f"Se produjo un error inesperado: {error_message}")
+        
+        # Vuelve a llamar a la función para intentar de nuevo
+        return create_user_name()
+
+    
+
+
+def retrieve_user_name():
+    userName = registration_contract.functions.getUserName(MY_ADDRESS).call({'from': MY_ADDRESS})
+    if (userName == ""):
+        print("Aún no tienes nombre de usuario, creemos uno.")
+        create_user_name()
+    else:
+        return userName
+    
+def retrieve_message_wall():
+    try:
+        wall = message_wall_contract.functions.getAllMessages().call({'from': MY_ADDRESS})
+        return wall
+    except Exception as e:
+        print("La transacción para recuperar los mensajes del muro falló.")
+        print(f"Error: {e}")
+        return []
+
+
+
+# Ejecución
+if __name__ == "__main__":
+    import getpass
+
+    # Pide la clave privada por terminal
+    PRIVATE_KEY = getpass.getpass("Introduce tu clave privada: ").strip()
+
+    # Asegúrate de que la clave privada es válida
+    if not PRIVATE_KEY or len(PRIVATE_KEY) != 64:
+        print("La clave privada no es válida.")
+        exit()
+
+    userName = retrieve_user_name()
+    print()
+    
+
+    while(True):
+        print()
+        print("Muro de mensajes:")
+        
+        wall = retrieve_message_wall()
+        #Solo me quedo los ultimos 10 mensajes
+        latest_messages = wall[-10:]
+        
+        for username, message in latest_messages:
+            print(f'{username}: "{message}"')
+        print()
+        
+
+        sino = input("Deseas postear un nuevo mensaje? Ingresa SI / NO: ").strip().upper()
+        if sino == "SI":
+            msg = input("Ingresa tu nuevo mensaje para postear en el muro: ").strip()
+            try:
+                gas_estimate = message_wall_contract.functions.postMessage(msg).estimate_gas({'from': MY_ADDRESS})
+                gas_limit = int(gas_estimate * 1.1)  # Aumenta el límite de gas en un 10% por seguridad
+            except Exception as e:
+                print(f"Error estimando el gas: {e}")
+                gas_limit = 200000  # Valor predeterminado si falla la estimación  
+
+
+            nonce = w3.eth.get_transaction_count(MY_ADDRESS)
+            
+            transaction = {
+				'to': MESSAGE_WALL_CHECKSUM_ADDRESS,
+				'gas': gas_limit,
+				'gasPrice': w3.to_wei('20', 'gwei'),
+				'nonce': nonce,
+				'from': MY_ADDRESS,
+				'value': 0,  # No transfieres Ether en este caso
+				'data': message_wall_contract.functions.postMessage(msg).build_transaction({'from': MY_ADDRESS})['data']
+			}
+            
+            signed_tx = w3.eth.account.sign_transaction(transaction, private_key=PRIVATE_KEY)
+            
+            try:
+                tx_hash = w3.eth.send_raw_transaction(signed_tx.raw_transaction)
+                receipt = w3.eth.wait_for_transaction_receipt(tx_hash)
+                print(f"¡Mensaje posteado con éxito! Hash de la transacción: {tx_hash.hex()}")
+            except Exception as e:
+                print("La transacción para postear el mensaje en el muro falló.")
+                print(f"Error: {e}")
+                
+        sino = input("Deseas finalizar la ejecución? Ingresa SI / NO: ").strip().upper()
+        if sino == "SI":
+            break

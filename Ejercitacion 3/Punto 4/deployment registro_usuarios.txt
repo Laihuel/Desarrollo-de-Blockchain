@@ -1,0 +1,15 @@
+[block:7084041 txIndex:7]from: 0xfd3...d0ef1to: UserRegistration.(constructor)value: 0 weidata: 0x608...a0033logs: 0hash: 0x7f4...ccfc3
+status	0x1 Transaction mined and execution succeed
+transaction hash	0xdb828083b1aef7866eaf3ef07b012326fe27412c9cb0386b4f349c0d9c358693
+block hash	0x7f493b6fa9410e1249becd8e9d04dd382303f725905c58df77ef1c509a0ccfc3
+block number	7084041
+contract address	0x45a310d63cefb97bfaaf02f72466b51abe582255
+from	0xfd31d16f7b3e5a1a94d0167f1014bc5c757d0ef1
+to	UserRegistration.(constructor)
+gas	635736 gas
+transaction cost	629572 gas 
+input	0x608...a0033
+decoded input	{}
+decoded output	 - 
+logs	[]
+raw logs	[]
