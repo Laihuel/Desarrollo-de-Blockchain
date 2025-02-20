@@ -1,0 +1,5 @@
+Testnet:
+Aleph Zero Testnet
+
+Contract:
+5G3Mb5zt3GyeMeCJk8dwhk7wJWb8Mjw76gRbN6D9pRJmBWnd

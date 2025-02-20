@@ -1,0 +1,5 @@
+Testnet:
+Aleph zero testnet
+
+Adress:
+5GQ9qpKQyMsP1zLaQHV96YpjFxoPSaYrp9HbnsPQaSiPKoxd
